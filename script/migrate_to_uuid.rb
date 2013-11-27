@@ -44,7 +44,7 @@ tables = {
              :singular => 'data_import'
            },
            :geocodings => {
-             :related => [],
+             :related => ['automatic_geocodings'],
              :singular => 'geocoding'
            },
            :layers => {
@@ -85,7 +85,7 @@ tables = {
              :singular => 'tag'
            },
            :user_tables => {
-             :related => ['data_imports', 'layers_user_tables', 'tags', 'automatic_geocodings'],
+             :related => ['data_imports', 'layers_user_tables', 'tags', 'automatic_geocodings', 'geocodings'],
              :singular => 'table',
              :relation_for => {'layers_user_tables' => 'user_table'}
            },
