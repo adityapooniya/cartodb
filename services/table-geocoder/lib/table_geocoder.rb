@@ -35,15 +35,15 @@ module CartoDB
 
     def generate_csv
       csv_file = File.join(working_dir, "wadus.csv")
-      connection.run(%Q{
-        COPY (
+      query = %Q{
           SELECT #{clean_formatter} as recId, #{clean_formatter} as searchText 
           FROM #{table_name}
           WHERE cartodb_georef_status IS FALSE OR cartodb_georef_status IS NULL
           GROUP BY recId
           LIMIT #{max_rows}
-        ) TO '#{csv_file}' DELIMITER ',' CSV HEADER
-      })
+      }
+      result = connection.copy_table(connection[query], format: :csv, options: 'HEADER')
+      File.write(csv_file, result)
       return csv_file
     end
 
@@ -103,11 +103,7 @@ module CartoDB
     end
 
     def import_results_to_temp_table
-      connection.run(%Q{
-        COPY #{temp_table_name}
-        FROM '#{deflated_results_path}' 
-        DELIMITER ',' CSV
-      })
+      connection.copy_into(temp_table_name.lit, data: File.read(deflated_results_path), format: :csv)
     end
 
     def load_results_into_original_table
