@@ -32,7 +32,7 @@ tables = {
              :singular => 'asset'
            },
            :automatic_geocodings => { 
-             :related => [],
+             :related => ['geocodings'],
              :singular => 'automatic_geocoding'
            },
            :client_applications => {
@@ -44,7 +44,7 @@ tables = {
              :singular => 'data_import'
            },
            :geocodings => {
-             :related => ['automatic_geocodings'],
+             :related => [],
              :singular => 'geocoding'
            },
            :layers => {
