@@ -139,8 +139,8 @@ $$
       conn = Rails::Sequel.connection
       conn.run("UPDATE pg_database SET datallowconn = 'false' WHERE datname = '#{database_name}'")
       User.terminate_database_connections(database_name)
-      conn.run("DROP DATABASE #{database_name}")
-      conn.run("DROP USER #{database_username}")
+      conn.run("DROP DATABASE \"#{database_name}\"")
+      conn.run("DROP USER \"#{database_username}\"")
     end.join
     monitor_user_notification
   end
