@@ -180,7 +180,15 @@ def copy_redis_keys(redis_keys, id, uuid, username)
   end
   redis.quit
 end
-  
+
+def alter_redis_hash(redis_key, redis_attribute, redis_value, options = {})
+  redis_db = options['db'].nil? ? 0 : options['db']
+  redis = Redis.new(:host => REDIS_HOST)
+  redis.select(redis_db)
+  redis.hset(redis_key, user_id, redis_value)
+  redis.quit
+end
+
 def relation_column_name_for(tables, table, related)
   if tables[table][:related].include?(related) && tables[table][:relation_for] && tables[table][:relation_for][related]
     tables[table][:relation_for][related]
@@ -293,6 +301,16 @@ def migrate_data(redis_keys)
       #rescue => e
       #  log('C', "Copying redis keys with uuid for id #{row['id']}", e.error.strip)
       #end
+    end
+  end
+  @conn.exec("SELECT token,user_id FROM oauth_tokens WHERE type='AccessToken'") do |result|
+    result.each do |row|
+      puts "Chaing user_id for oauth token '#{row['token']}'"
+      begin
+        alter_redis_hash("rails:oauth_access_tokens:#{row['token']}", 'user_id', row['user_id'], {'db' => 3})
+      rescue => e
+        log('C', "Changing user id to uuid in oauth token #{row['token']}", e.error.strip)
+      end
     end
   end
 end
