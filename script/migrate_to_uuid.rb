@@ -36,7 +36,7 @@ tables = {
              :singular => 'automatic_geocoding'
            },
            :client_applications => {
-             :related => [],
+             :related => ['oauth_tokens'],
              :singular => 'client_application'
            },
            :data_imports => {
